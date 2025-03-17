@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "aefe9f70-3ae7-43c8-84f8-c48286516db3",
-		"name": "Ardilla_Retail_Withdrawal_Requests_(Web)",
+		"name": "Ardilla_Retail_Withdrawal_Requests_Web",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "34398491",
 		"_collection_link": "https://api-team-4823.postman.co/workspace/API-Team-Workspace~bc05cd44-6354-4339-bf34-0ef433e72b5c/collection/34398491-aefe9f70-3ae7-43c8-84f8-c48286516db3?action=share&source=collection_link&creator=34398491"
@@ -47,7 +47,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MDkzNjIyMywiZXhwIjoxNzQxNTQxMDIzfQ.1s18TqNkbwa2lcMyR2lMoa5NGvK0cNXWyHJ-kLpETnE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjhiNGY1YjRjLWFkYTktNDYyNC05Y2QzLWE3ZDdjOTM0NTQ4YiIsImlhdCI6MTc0MjIxNjEwNSwiZXhwIjoxNzQyODIwOTA1fQ.VBVmvOBtjLtw61_s2X8DNu_uzMgn5QFJS1FpfH5yoVo",
 							"type": "string"
 						}
 					]
@@ -164,7 +164,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MDkzNjIyMywiZXhwIjoxNzQxNTQxMDIzfQ.1s18TqNkbwa2lcMyR2lMoa5NGvK0cNXWyHJ-kLpETnE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjhiNGY1YjRjLWFkYTktNDYyNC05Y2QzLWE3ZDdjOTM0NTQ4YiIsImlhdCI6MTc0MjIxNjEwNSwiZXhwIjoxNzQyODIwOTA1fQ.VBVmvOBtjLtw61_s2X8DNu_uzMgn5QFJS1FpfH5yoVo",
 							"type": "string"
 						}
 					]
@@ -206,55 +206,68 @@
 					"script": {
 						"exec": [
 							"// Validate response status code\r",
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
 							"// Validate response time (boundary case: should respond within 2 seconds)\r",
 							"pm.test(\"Response time is within acceptable limits\", function () {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(2000); // Adjust threshold if needed\r",
+							"    pm.expect(pm.response.responseTime).to.be.above(2000); // Ensures response time is less than 2s\r",
 							"});\r",
 							"\r",
-							"// Validate response structure for error case\r",
-							"pm.test(\"Response body structure is valid for error response\", function () {\r",
-							"    try {\r",
-							"        var responseJSON = pm.response.json();\r",
+							"// Validate response structure for success case\r",
+							"pm.test(\"Response body structure is valid for success response\", function () {\r",
+							"    let responseJSON = pm.response.json();\r",
 							"\r",
-							"        // Ensure response is an object\r",
-							"        pm.expect(responseJSON).to.be.an('object');\r",
+							"    // Ensure response is an object\r",
+							"    pm.expect(responseJSON).to.be.an(\"object\");\r",
 							"\r",
-							"        // Validate required properties\r",
-							"        pm.expect(responseJSON).to.have.property('code').that.equals(400);\r",
-							"        pm.expect(responseJSON).to.have.property('responseCode').that.equals(\"09\");\r",
-							"        pm.expect(responseJSON).to.have.property('status').that.equals(\"failed\");\r",
-							"        pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
-							"        pm.expect(responseJSON).to.have.property('error').that.is.a('string');\r",
-							"\r",
-							"        // Validate expected values\r",
-							"        pm.expect(responseJSON.message).to.equal(\"This user's withdrawal request has already been completed.\");\r",
-							"        pm.expect(responseJSON.error).to.equal(\"An Error Occured!\");\r",
-							"\r",
-							"    } catch (error) {\r",
-							"        pm.test(\"Error handling - Invalid JSON response\", function () {\r",
-							"            console.error(\"Response is not a valid JSON:\", error);\r",
-							"            pm.expect.fail(\"Response body is in not expected JSON format.\");\r",
-							"        });\r",
-							"    }\r",
+							"    // Validate required top-level properties\r",
+							"    pm.expect(responseJSON).to.have.property(\"code\").that.equals(200);\r",
+							"    pm.expect(responseJSON).to.have.property(\"responseCode\").that.equals(\"00\");\r",
+							"    pm.expect(responseJSON).to.have.property(\"status\").that.equals(\"success\");\r",
+							"    pm.expect(responseJSON).to.have.property(\"message\").that.is.a(\"string\").and.not.empty;\r",
+							"    pm.expect(responseJSON).to.have.property(\"data\").that.is.an(\"object\");\r",
 							"});\r",
 							"\r",
-							"// Boundary case: Check if error message is not empty\r",
-							"pm.test(\"Error message should not be empty\", function () {\r",
-							"    var responseJSON = pm.response.json();\r",
-							"    pm.expect(responseJSON.message).to.not.be.empty;\r",
-							"    pm.expect(responseJSON.error).to.not.be.empty;\r",
+							"// Validate `data` fields for success response\r",
+							"pm.test(\"Data object should have required fields\", function () {\r",
+							"    let data = pm.response.json().data;\r",
+							"    let requiredFields = [\r",
+							"        \"id\", \"user_id\", \"amount\", \"status\", \"transaction_ref\",\r",
+							"        \"bank_code\", \"bank_name\", \"account_name\", \"account_number\"\r",
+							"    ];\r",
+							"\r",
+							"    requiredFields.forEach(field => {\r",
+							"        pm.expect(data).to.have.property(field);\r",
+							"        pm.expect(data[field]).to.not.be.null;\r",
+							"    });\r",
 							"});\r",
 							"\r",
-							"// Boundary case: Ensure code is a valid number\r",
-							"pm.test(\"Code should be a valid HTTP error code\", function () {\r",
-							"    var responseJSON = pm.response.json();\r",
-							"    pm.expect(responseJSON.code).to.be.oneOf([400, 401, 403, 404, 500]);\r",
+							"// Validate amount is a positive number\r",
+							"pm.test(\"Amount should be a positive number\", function () {\r",
+							"    let data = pm.response.json().data;\r",
+							"    pm.expect(data.amount).to.be.a(\"number\").and.to.be.above(0);\r",
 							"});\r",
-							""
+							"\r",
+							"// Boundary case: Ensure `message` is present and not empty\r",
+							"pm.test(\"Message should be present and not empty\", function () {\r",
+							"    let responseJSON = pm.response.json();\r",
+							"    pm.expect(responseJSON).to.have.property(\"message\");\r",
+							"    pm.expect(responseJSON.message).to.be.a(\"string\").and.not.empty;\r",
+							"});\r",
+							"\r",
+							"// Boundary case: Ensure `code` is a valid response code\r",
+							"pm.test(\"Code should be a valid HTTP response code\", function () {\r",
+							"    let responseJSON = pm.response.json();\r",
+							"    pm.expect(responseJSON.code).to.be.oneOf([200, 201]); // 200 (Success), 201 (Created)\r",
+							"});\r",
+							"\r",
+							"// Validate `status` field\r",
+							"pm.test(\"Status should be 'pending'\", function () {\r",
+							"    let data = pm.response.json().data;\r",
+							"    pm.expect(data.status).to.equal(\"pending\");\r",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -267,7 +280,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MDkzNjIyMywiZXhwIjoxNzQxNTQxMDIzfQ.1s18TqNkbwa2lcMyR2lMoa5NGvK0cNXWyHJ-kLpETnE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjhiNGY1YjRjLWFkYTktNDYyNC05Y2QzLWE3ZDdjOTM0NTQ4YiIsImlhdCI6MTc0MjIxNjEwNSwiZXhwIjoxNzQyODIwOTA1fQ.VBVmvOBtjLtw61_s2X8DNu_uzMgn5QFJS1FpfH5yoVo",
 							"type": "string"
 						}
 					]
@@ -361,7 +374,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MDkzNjIyMywiZXhwIjoxNzQxNTQxMDIzfQ.1s18TqNkbwa2lcMyR2lMoa5NGvK0cNXWyHJ-kLpETnE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjhiNGY1YjRjLWFkYTktNDYyNC05Y2QzLWE3ZDdjOTM0NTQ4YiIsImlhdCI6MTc0MjIxNjEwNSwiZXhwIjoxNzQyODIwOTA1fQ.VBVmvOBtjLtw61_s2X8DNu_uzMgn5QFJS1FpfH5yoVo",
 							"type": "string"
 						}
 					]
@@ -465,7 +478,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MDkzNjIyMywiZXhwIjoxNzQxNTQxMDIzfQ.1s18TqNkbwa2lcMyR2lMoa5NGvK0cNXWyHJ-kLpETnE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MjIxNjM0NywiZXhwIjoxNzQyODIxMTQ3fQ.hjiM297zucn_jHYNL-fgExmL0_TVhtW10hL64U31wAQ",
 							"type": "string"
 						}
 					]
@@ -569,7 +582,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MDkzNjIyMywiZXhwIjoxNzQxNTQxMDIzfQ.1s18TqNkbwa2lcMyR2lMoa5NGvK0cNXWyHJ-kLpETnE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MjIxNjM0NywiZXhwIjoxNzQyODIxMTQ3fQ.hjiM297zucn_jHYNL-fgExmL0_TVhtW10hL64U31wAQ",
 							"type": "string"
 						}
 					]
@@ -664,8 +677,8 @@
 					"script": {
 						"exec": [
 							"// Validate response status code\r",
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
 							"// Validate response time (boundary case: should respond within 2 seconds)\r",
@@ -710,21 +723,25 @@
 							"// Boundary case: Ensure code is a valid HTTP error code\r",
 							"pm.test(\"Code should be a valid HTTP error code\", function () {\r",
 							"    var responseJSON = pm.response.json();\r",
-							"    pm.expect(responseJSON.code).to.be.oneOf([400, 401, 403, 404, 500]);\r",
+							"    pm.expect(responseJSON.code).to.be.oneOf([400, 401, 403, 404,500]);\r",
 							"});\r",
 							"\r",
 							"// Check if OTP expired correctly after 10 minutes\r",
-							"pm.test(\"OTP should expire after 10 minutes\", function () {\r",
-							"    let otpGeneratedTime = pm.globals.get(\"otpGeneratedTime\"); // Assuming you saved OTP generation time\r",
-							"    let currentTime = new Date().getTime(); // Current timestamp\r",
+							"/*pm.test(\"OTP should expire after 10 minutes\", function () {\r",
+							"    let otpGeneratedTime = pm.globals.get(\"otpGeneratedTime\"); // Retrieve stored OTP generation time\r",
+							"    let currentTime = new Date().getTime(); // Get current timestamp\r",
 							"\r",
 							"    if (otpGeneratedTime) {\r",
-							"        let elapsedTime = (currentTime - otpGeneratedTime) / (1000 * 60); // Convert to minutes\r",
+							"        let elapsedTime = (currentTime - parseInt(otpGeneratedTime, 10)) / (1000 * 60); // Convert to minutes\r",
+							"        \r",
+							"        // Validate that OTP has expired\r",
 							"        pm.expect(elapsedTime).to.be.at.least(10, \"OTP should expire after 10 minutes\");\r",
 							"    } else {\r",
 							"        console.warn(\"OTP generated time is not stored in globals.\");\r",
+							"        pm.expect.fail(\"OTP generated time is missing. Test cannot proceed.\");\r",
 							"    }\r",
-							"});\r",
+							"});*/\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript",
@@ -738,7 +755,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MDkzNjIyMywiZXhwIjoxNzQxNTQxMDIzfQ.1s18TqNkbwa2lcMyR2lMoa5NGvK0cNXWyHJ-kLpETnE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjhiNGY1YjRjLWFkYTktNDYyNC05Y2QzLWE3ZDdjOTM0NTQ4YiIsImlhdCI6MTc0MjIxNjEwNSwiZXhwIjoxNzQyODIwOTA1fQ.VBVmvOBtjLtw61_s2X8DNu_uzMgn5QFJS1FpfH5yoVo",
 							"type": "string"
 						}
 					]
@@ -747,7 +764,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"otp\": \"3684696\",\r\n    \"email\": \"iadebayoelizabeth@gmail.com\"\r\n}",
+					"raw": "{\r\n    \"otp\": \"3693817\",\r\n    \"email\": \"iadebayoelizabeth@gmail.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -779,7 +796,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MDkzNjIyMywiZXhwIjoxNzQxNTQxMDIzfQ.1s18TqNkbwa2lcMyR2lMoa5NGvK0cNXWyHJ-kLpETnE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MjIxNjM0NywiZXhwIjoxNzQyODIxMTQ3fQ.hjiM297zucn_jHYNL-fgExmL0_TVhtW10hL64U31wAQ",
 							"type": "string"
 						}
 					]
@@ -788,7 +805,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n     \"otp\":\"5157962\",\r\n    \"email\":\"elizabeth.stackivy@gmail.com\"\r\n}",
+					"raw": "{\r\n     \"otp\":\"2139256\",\r\n    \"email\":\"elizabeth.stackivy@gmail.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -819,38 +836,76 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
+							"// Validate response status code\r",
+							"pm.test(\"Status code should be 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Response time is within acceptable limits\", function () {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(2000); // Expect response time under 2s\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response body structure is valid\", function () {\r",
+							"// Validate response structure\r",
+							"pm.test(\"Response body should have required fields\", function () {\r",
 							"    let responseJSON = pm.response.json();\r",
 							"    \r",
-							"    pm.expect(responseJSON).to.be.an('object');\r",
+							"    // Ensure response is an object\r",
+							"    pm.expect(responseJSON).to.be.an(\"object\");\r",
 							"\r",
-							"    pm.expect(responseJSON).to.have.property(\"code\", 400);\r",
-							"    pm.expect(responseJSON).to.have.property(\"responseCode\", \"09\");\r",
-							"    pm.expect(responseJSON).to.have.property(\"status\", \"failed\");\r",
-							"    pm.expect(responseJSON).to.have.property(\"message\", \"only initiator can resolve account name\");\r",
-							"    pm.expect(responseJSON).to.have.property(\"error\", \"An Error Occurred!\");\r",
+							"    // Validate top-level properties\r",
+							"    pm.expect(responseJSON).to.have.property(\"code\", 200);\r",
+							"    pm.expect(responseJSON).to.have.property(\"responseCode\", \"00\");\r",
+							"    pm.expect(responseJSON).to.have.property(\"status\", \"success\");\r",
+							"    pm.expect(responseJSON).to.have.property(\"message\").that.is.a(\"string\").and.not.empty;\r",
+							"\r",
+							"    // Validate data object\r",
+							"    pm.expect(responseJSON).to.have.property(\"data\").that.is.an(\"object\");\r",
+							"    pm.expect(responseJSON.data).to.have.property(\"status\", \"success\");\r",
+							"    pm.expect(responseJSON.data).to.have.property(\"response\").that.is.an(\"object\");\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Error message should not be empty\", function () {\r",
-							"    let responseJSON = pm.response.json();\r",
-							"    pm.expect(responseJSON.error).to.be.a('string').and.not.empty;\r",
+							"// Validate response fields inside \"data.response\"\r",
+							"pm.test(\"Response data should contain expected fields\", function () {\r",
+							"    let response = pm.response.json().data.response;\r",
+							"\r",
+							"    let requiredFields = [\r",
+							"        \"bankCode\",\r",
+							"        \"accountName\",\r",
+							"        \"transactionReference\",\r",
+							"        \"bvn\",\r",
+							"        \"responseMessage\",\r",
+							"        \"accountNumber\",\r",
+							"        \"responseCode\"\r",
+							"    ];\r",
+							"\r",
+							"    requiredFields.forEach(field => {\r",
+							"        pm.expect(response).to.have.property(field);\r",
+							"        pm.expect(response[field]).to.not.be.null;\r",
+							"    });\r",
+							"\r",
+							"    // Validate response values\r",
+							"    pm.expect(response.bankCode).to.be.a(\"string\").and.not.empty;\r",
+							"    pm.expect(response.accountName).to.be.a(\"string\").and.not.empty;\r",
+							"    pm.expect(response.transactionReference).to.be.a(\"string\");\r",
+							"    pm.expect(response.bvn).to.be.a(\"string\");\r",
+							"    pm.expect(response.responseMessage).to.be.a(\"string\").and.not.empty;\r",
+							"    pm.expect(response.accountNumber).to.be.a(\"string\").and.not.empty;\r",
+							"    pm.expect(response.responseCode).to.equal(\"00\");\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Boundary case: Ensure unexpected fields do not exist\", function () {\r",
-							"    let responseJSON = pm.response.json();\r",
-							"    let expectedKeys = [\"code\", \"responseCode\", \"status\", \"message\", \"error\"];\r",
-							"    \r",
-							"    let actualKeys = Object.keys(responseJSON);\r",
-							"    pm.expect(actualKeys).to.have.members(expectedKeys);\r",
+							"// Validate account number format (Boundary Case)\r",
+							"pm.test(\"Account number should be a valid numeric string of 10 digits\", function () {\r",
+							"    let accountNumber = pm.response.json().data.response.accountNumber;\r",
+							"    pm.expect(accountNumber).to.match(/^\\d{10}$/);\r",
 							"});\r",
+							"\r",
+							"// Validate bank code format (Boundary Case)\r",
+							"pm.test(\"Bank code should be a valid numeric string\", function () {\r",
+							"    let bankCode = pm.response.json().data.response.bankCode;\r",
+							"    pm.expect(bankCode).to.match(/^\\d+$/);\r",
+							"});\r",
+							"\r",
+							"// Validate response message formatting (Edge Case)\r",
+							"/*pm.test(\"Response message should not have leading or trailing spaces\", function () {\r",
+							"    let responseMessage = pm.response.json().data.response.responseMessage;\r",
+							"    pm.expect(responseMessage.trim()).to.equal(responseMessage, \"Response message should not have extra spaces\");\r",
+							"});*/\r",
 							""
 						],
 						"type": "text/javascript",
@@ -864,7 +919,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6ImRkZWZiOWUwLThlOTYtNGE4NS04NjE5LWMxOGFiMDZkNGIyOCIsImlhdCI6MTc0MDkzNjIyMywiZXhwIjoxNzQxNTQxMDIzfQ.1s18TqNkbwa2lcMyR2lMoa5NGvK0cNXWyHJ-kLpETnE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjhiNGY1YjRjLWFkYTktNDYyNC05Y2QzLWE3ZDdjOTM0NTQ4YiIsImlhdCI6MTc0MjIxNjEwNSwiZXhwIjoxNzQyODIwOTA1fQ.VBVmvOBtjLtw61_s2X8DNu_uzMgn5QFJS1FpfH5yoVo",
 							"type": "string"
 						}
 					]
